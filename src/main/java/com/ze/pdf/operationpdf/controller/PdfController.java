@@ -2,8 +2,12 @@ package com.ze.pdf.operationpdf.controller;
 
 import com.ze.pdf.operationpdf.module.IPdfHandler;
 import com.ze.pdf.operationpdf.module.impl.PdfHandler;
-import com.ze.pdf.operationpdf.module.utils.ResourceUtils;
+import com.ze.pdf.operationpdf.module.utils.ResourceUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.hc.core5.http.HttpResponse;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,8 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.image.ImageFilter;
+import java.awt.image.RasterFormatException;
 import java.io.*;
 
 /**
@@ -23,7 +28,9 @@ import java.io.*;
  */
 @RestController
 @RequestMapping("/pdfProcess")
+@Slf4j
 public class PdfController {
+
     @Resource
     ResourceLoader resourceLoader;
 
@@ -64,6 +71,7 @@ public class PdfController {
     @PostMapping("/stamp/halve/pdfAndImg")
     public byte[] halvePdfAndImg(@RequestParam("pdfFile") MultipartFile pdfFile,
                                  @RequestParam("imgFile") MultipartFile imgFile) {
+
         InputStream imgInputStream = null;
         ByteArrayOutputStream outputStream = null;
         try {
@@ -104,6 +112,9 @@ public class PdfController {
     public byte[] halvePdfAndImageSize(@RequestParam("pdfFile") MultipartFile pdfFile,
                                        @RequestParam("imgFile") MultipartFile imgFile,
                                        Float scale) {
+
+        log.info("pdf文件:{},img文件:{},scale参数:{}", pdfFile.getName(), imgFile.getName(), scale);
+
         // 获取各种流对象
         InputStream imgInputStream = null;
         InputStream pdfInputStream = null;
@@ -112,14 +123,11 @@ public class PdfController {
         try {
             imgInputStream = imgFile.getInputStream();
             pdfInputStream = pdfFile.getInputStream();
-            // 执行业务
+            // 执行处理pdf逻辑
             pdDocument = pdfHandler.stampImgToPdf(imgInputStream, pdfInputStream, scale);
+            // 封装处理后数据，返回给客户端
             outputStream = new ByteArrayOutputStream();
-            // 已处理的pdf文档保存到输出流
-//            pdDocument.save(outputStream);
-
-//            pdDocument.save(new File(ResourceUtils.getResourcePath() + File.separator + "pdf" + File.separator + System.currentTimeMillis() + ".png"));
-            pdDocument.save(new File(ResourceUtils.getResourcePath() + "pdf" + "/" + System.currentTimeMillis() + ".pdf"));
+            pdDocument.save(new File(ResourceUtil.getResourcePath() + "pdf" + "/" + System.currentTimeMillis() + ".pdf"));
             return outputStream.toByteArray();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -127,6 +135,68 @@ public class PdfController {
             try {
                 imgInputStream.close();
                 pdfInputStream.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    /**
+     * 图像不等分：
+     * 根据传入scale缩放插入章大小；
+     * 根据传入 fistScale、lastScale 首页比例、尾页比例，调整首尾也插入图像比例
+     * 根据 accuracyCompensation 精度补偿调整章完整度
+     *
+     * @param pdfFile              pdf文档
+     * @param imgFile              图像章
+     * @param scale                图像章缩放比例
+     * @param fistScale            首页比例
+     * @param lastScale            尾页比例
+     * @param accuracyCompensation 精度补偿
+     * @return 已处理的pdf文档
+     */
+    @PostMapping("/stamp/unequal/pdfImgAndParam")
+    public byte[] unequalPdfAndImageSize(@RequestParam("pdfFile") MultipartFile pdfFile,
+                                         @RequestParam("imgFile") MultipartFile imgFile,
+                                         Float scale,
+                                         Float fistScale,
+                                         Float lastScale,
+                                         int accuracyCompensation,
+                                         HttpServletResponse response) {
+
+        log.info("pdf文件:{},\nimg文件:{},\nscale参数:{},\nfistScale:{},\nlastScale:{},\naccuracyCompensation:{}",
+                pdfFile.getName(), imgFile.getName(), scale, fistScale, lastScale, accuracyCompensation);
+
+        // 获取各种流对象
+        InputStream imgInputStream = null;
+        InputStream pdfInputStream = null;
+        PDDocument pdDocument = null;
+        ByteArrayOutputStream outputStream = null;
+        try {
+            imgInputStream = imgFile.getInputStream();
+            pdfInputStream = pdfFile.getInputStream();
+            // 执行处理pdf逻辑
+            pdDocument = pdfHandler.stampImgToPdf(imgInputStream, pdfInputStream, scale, fistScale, lastScale, accuracyCompensation);
+            // 封装处理后数据，返回给客户端
+            outputStream = new ByteArrayOutputStream();
+            pdDocument.save(new File(ResourceUtil.getResourcePath() + "pdf" + "/test" + System.currentTimeMillis() + ".pdf"));
+            return outputStream.toByteArray();
+        } catch (RasterFormatException rasterFormatException) {
+            rasterFormatException.printStackTrace();
+            System.out.println("精度补偿参数有误");
+            response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
+            return new String("精度补偿参数有误").getBytes();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("系统错误");
+            response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
+            return new String("系统错误").getBytes();
+        } finally {
+            try {
+                outputStream.close();
+                pdDocument.close();
+                pdfInputStream.close();
+                imgInputStream.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

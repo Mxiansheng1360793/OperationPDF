@@ -35,7 +35,6 @@ public class PdfHandler implements IPdfHandler {
          *  获取图片
          *  获取PDF文件
          */
-
         // 读取待插入图片
         BufferedImage img = ImageIO.read(image);
         // 读取pdf文件
@@ -197,11 +196,11 @@ public class PdfHandler implements IPdfHandler {
         // 缩放图片
         Image image = bufferedImage.getScaledInstance((int) imageWidth, (int) imageHeight, Image.SCALE_SMOOTH);
         // 创建一个空白的bufferImage缓存区，宽高与原图相同
-        BufferedImage img = new BufferedImage(image.getWidth(null), image.getHeight(null), bufferedImage.getType());
+        BufferedImage bufferImg = new BufferedImage(image.getWidth(null), image.getHeight(null), bufferedImage.getType());
         // 获取 Graphics2D 上下文
-        Graphics2D g2d = bufferedImage.createGraphics();
+        Graphics2D g2d = bufferImg.createGraphics();
         // 在bufferImage 上绘制img
-        g2d.drawImage(img, 0, 0, null);
+        g2d.drawImage(image, 0, 0, null);
         // 释放资源
         g2d.dispose();
 
@@ -215,7 +214,7 @@ public class PdfHandler implements IPdfHandler {
         for (int i = 0; i < pagesCount; i++) {
             float posX = i * blockWidth;
             float posY = imageHeight;
-            BufferedImage block = img.getSubimage((int) posX, 0, (int) blockWidth, (int) imageHeight);
+            BufferedImage block = bufferImg.getSubimage((int) posX, 0, (int) blockWidth, (int) imageHeight);
             blockImages.add(block);
         }
 
@@ -331,7 +330,7 @@ public class PdfHandler implements IPdfHandler {
     }
 
     @Override
-    public PDDocument stampImgToPdf(File imgFile, File pdfFile, Float scale, Float fistScale, Float lastScale,Integer accuracyCompensation) throws IOException {
+    public PDDocument stampImgToPdf(File imgFile, File pdfFile, Float scale, Float fistScale, Float lastScale, Integer accuracyCompensation) throws IOException {
         /**
          * 1、资源准备：
          *  获取图片
@@ -402,7 +401,7 @@ public class PdfHandler implements IPdfHandler {
                         BufferedImage block = img.getSubimage(startX, 0, imageWidth - startX, imageHeight);
                         blockImages.add(block);
                         continue;
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                         System.out.println("精度补偿超出");
                     }
@@ -410,7 +409,7 @@ public class PdfHandler implements IPdfHandler {
                 BufferedImage block = img.getSubimage(startX, 0, equalWidth, imageHeight);
                 blockImages.add(block);
                 startX += equalWidth + accuracyCompensation;
-            }catch (RasterFormatException rasterFormatException){
+            } catch (RasterFormatException rasterFormatException) {
                 rasterFormatException.printStackTrace();
                 System.out.println("精度补偿超出");
             }
@@ -507,29 +506,28 @@ public class PdfHandler implements IPdfHandler {
         // 根据等分宽度切分插入图片，并保存到切分图片集合中
         int startX = 0;
         for (int i = 0; i < pagesCount; i++) {
-            try {
-                if (i == 0) {
-                    BufferedImage block = img.getSubimage(startX, 0, (int) fistWidth, imageHeight);
-                    blockImages.add(block);
-                    startX = fistWidth;
-                    continue;
-                } else if (i == pagesCount) {
-                    try {
-                        BufferedImage block = img.getSubimage(startX, 0, imageWidth - startX, imageHeight);
-                        blockImages.add(block);
-                        continue;
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        System.out.println("精度补偿超出");
-                    }
-                }
-                BufferedImage block = img.getSubimage(startX, 0, equalWidth, imageHeight);
+            if (i == 0) {
+                BufferedImage block = img.getSubimage(startX, 0, (int) fistWidth, imageHeight);
                 blockImages.add(block);
-                startX += equalWidth + accuracyCompensation;
-            }catch (RasterFormatException rasterFormatException){
-                rasterFormatException.printStackTrace();
-                System.out.println("精度补偿超出");
+                startX = fistWidth;
+                continue;
+            } else if (i == pagesCount) {
+                try {
+                    BufferedImage block = img.getSubimage(startX, 0, imageWidth - startX, imageHeight);
+                    blockImages.add(block);
+                    continue;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("精度补偿超出");
+                }
             }
+            BufferedImage block = img.getSubimage(startX, 0, equalWidth, imageHeight);
+            blockImages.add(block);
+            startX += equalWidth + accuracyCompensation;
+//            }catch (RasterFormatException rasterFormatException){
+//                rasterFormatException.printStackTrace();
+//                System.out.println("精度补偿超出");
+//            }
         }
 
         /**
