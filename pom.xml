@@ -11,11 +11,15 @@
     <groupId>com.ze.pdf</groupId>
     <artifactId>operation-pdf</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>operation-pdf</name>
     <description>operation-pdf</description>
+
     <properties>
         <java.version>1.8</java.version>
+        <skipTests>true</skipTests>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -45,6 +49,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 

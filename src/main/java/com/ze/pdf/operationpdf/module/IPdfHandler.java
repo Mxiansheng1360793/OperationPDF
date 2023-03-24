@@ -42,7 +42,7 @@ public interface IPdfHandler {
      * @return
      * @throws IOException
      */
-    public PDDocument stampImgToPdf(InputStream imgInputStream, InputStream pdfInputStream, Float scale) throws IOException;
+    public PDDocument stampScaleImgToPdf(InputStream imgInputStream, InputStream pdfInputStream, Float scale) throws IOException;
 
 
     /**
@@ -54,7 +54,7 @@ public interface IPdfHandler {
      * @return
      * @throws IOException
      */
-    public PDDocument stampImgToPdf(File imgFile, File pdfFile, Float scale) throws IOException;
+    public PDDocument stampScaleImgToPdf(File imgFile, File pdfFile, Float scale) throws IOException;
 
     /**
      * 自动向PDF中每一个插入骑缝章
@@ -66,16 +66,14 @@ public interface IPdfHandler {
      * @param scale                插入章缩放比例
      * @param fistScale            首页插入章比例
      * @param lastScale            尾页插入章比例
-     * @param accuracyCompensation 精度补偿
      * @return
      * @throws IOException
      */
-    public PDDocument stampImgToPdf(File imgFile,
+    public PDDocument stampScaleImgToPdf(File imgFile,
                                     File pdfFile,
                                     Float scale,
                                     Float fistScale,
-                                    Float lastScale,
-                                    Integer accuracyCompensation) throws IOException;
+                                    Float lastScale) throws IOException;
 
     /**
      * 自动向PDF中每一个插入骑缝章
@@ -87,15 +85,13 @@ public interface IPdfHandler {
      * @param scale                插入章缩放比例
      * @param fistScale            首页插入章比例
      * @param lastScale            尾页插入章比例
-     * @param accuracyCompensation 精度补偿
      * @return
      * @throws IOException
      */
-    public PDDocument stampImgToPdf(InputStream imgInput,
+    public PDDocument stampScaleImgToPdf(InputStream imgInput,
                                     InputStream pdfInput,
                                     Float scale,
                                     Float fistScale,
-                                    Float lastScale,
-                                    Integer accuracyCompensation) throws IOException;
+                                    Float lastScale) throws IOException;
 
 }

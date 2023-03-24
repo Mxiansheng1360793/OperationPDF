@@ -1,15 +1,14 @@
 package com.ze.pdf.operationpdf;
 
-import com.ze.pdf.operationpdf.module.utils.ResourceUtil;
+import com.ze.pdf.operationpdf.utils.ResourceUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.entity.mime.FileBody;
 import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
 import org.apache.hc.client5.http.entity.mime.StringBody;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.util.Timeout;
@@ -31,6 +30,7 @@ import java.util.concurrent.TimeUnit;
  * @Date : 2023/3/22 21:20
  * @Description : TODO
  */
+@Slf4j
 public class HttpTest {
     private File imgFile;
     private File pdfFile;
@@ -39,6 +39,10 @@ public class HttpTest {
 
     private final String URL_ONE = "http://localhost:8999/pdfProcess/stamp/halve/pdfImgAndParam";
     private final String URL_TWO = "http://localhost:8999/pdfProcess/stamp/unequal/pdfImgAndParam";
+
+    private final String URL_THREE = "http://124.222.136.63:8999/pdfProcess/stamp/unequal/pdfImgAndParam";
+
+
 
     @Before
     public void setUp() {
@@ -49,11 +53,11 @@ public class HttpTest {
     }
 
     @Test
-    public void test01() throws IOException, ParseException {
-        imgFile = new File("C:\\Users\\MX\\Desktop\\dailyTask\\up-test\\mmexport1679453123060.png");
-        pdfFile = new File("C:\\Users\\MX\\Desktop\\dailyTask\\up-test\\GetReportFileOfPDF.pdf");
+    public void test01() throws IOException, ProtocolException {
+        imgFile = new File("d:\\Users\\Administrator\\Desktop\\test\\mmexport1679453123060.png");
+        pdfFile = new File("d:\\Users\\Administrator\\Desktop\\test\\GetReportFileOfPDF.pdf");
         httpClient = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(URL_TWO);
+        HttpPost post = new HttpPost(URL_THREE);
         // 配置请求参数
         RequestConfig requestConfig = RequestConfig.custom()
                 // 设置连接超时时间
@@ -100,10 +104,11 @@ public class HttpTest {
         } else {
             // 响应状态码不为200
             System.out.println("Server returned " + httpResponse.getCode());
-            HttpEntity entity = httpResponse.getEntity();
-
-            String s = EntityUtils.toString(entity);
-
+            Header[] headers = httpResponse.getHeaders();
+            for (Header header : headers) {
+                if (header.getName().equals("X-Message"))
+                log.info("请求头名称:{},请求头数据:{}",header.getName(),new String(header.getValue().getBytes("ISO-8859-1"), "UTF-8"));
+            }
         }
     }
 }
