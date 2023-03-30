@@ -1,36 +1,14 @@
 # operation-pdf
 
 #### Description
-PDF操作接口
+PDF automatic insertion of stitching stamps program.
 
 #### Software Architecture
-Software architecture description
+This software mainly solves the problem of inserting various stitching stamps into PDF documents. It provides multiple insertion modes and can be used as a plug-in program. Just transfer the PDF file and stamp image to the specified program interface, and the background will automatically process and calculate the insertion position of the stamp in each page of the PDF file, and can also intelligently determine the insertion position based on the horizontal and vertical situation of the PDF page. Different interfaces achieve different effects, and you can also set specific parameters to control the size of the inserted stamp and the ratio of inserting it to the first and last pages.
+Software architecture: pdfbox, springboot
 
-#### Installation
+#### Author Information
+author: Jin
+version: 1.0
+email: 806573236@qq.com
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Instructions
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### Contribution
-
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
-
-
-#### Gitee Feature
-
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
