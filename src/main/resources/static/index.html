@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF骑缝章自动插入系统</title>
+</head>
+<body>
+    <h2>-------------------------------------------------------------------------------</h2>
+    <h1> 等分：上传PDF</h1>
+    <form method="post" enctype="multipart/form-data"
+          action="http://localhost:8999/pdfProcess/local/halve/scaleStampToPdf">
+        <label for="pdfFile">上传 PDF 文件:</label>
+        <input type="file" id="pdfFile" name="pdfFile" accept=".pdf"><br><br>
+
+        <label for="scale">PNG 图片缩放比例</label>
+        <input type="number" step="0.01" min="0" max="1" id="scale" name="scale" value="0.3"><br><br>
+
+        <button type="submit">上传</button>
+    </form>
+
+    <h2>-------------------------------------------------------------------------------</h2>
+
+    <h1>比例切分：上传PDF</h1>
+    <form method="post" enctype="multipart/form-data"
+          action="http://localhost:8999/pdfProcess/local/unequal/scaleStampToPdf">
+        <label for="pdfFile">上传 PDF 文件:</label>
+        <input type="file" name="pdfFile" accept=".pdf"><br><br>
+
+
+        <label for="scale">PNG 图片缩放比例</label>
+        <input type="number" step="0.01" min="0" max="1" name="scale" value="0.3"><br><br>
+
+        <h5>首页切分比例+尾页切分比例 < 1,不能超过1</h5>
+        <label for="fistScale">首页图片切分比例</label>
+        <input type="number" id="fistScale" step="0.01" min="0" max="1"  name="fistScale" value="0.3"><br><br>
+
+        <label for="lastScale">尾页图片切分比例</label>
+        <input type="number" id="lastScale" step="0.01" min="0" max="1" name="lastScale" value="0.2"><br><br>
+        <button type="submit">上传</button>
+    </form>
+
+    <h2>-------------------------------------------------------------------------------</h2>
+
+    <h1>等分：上传PDF和图片</h1>
+    <form method="post" enctype="multipart/form-data"
+          action="http://localhost:8999/pdfProcess/upload/halve/scaleStampToPdf">
+        <label for="pdfFile">上传 PDF 文件:</label>
+        <input type="file" name="pdfFile" accept=".pdf"><br><br>
+
+        <label for="imgFile">上传 PNG 图片:</label>
+        <input type="file" id="imgFile" name="imgFile" accept=".png , .jpg"><br><br>
+
+        <label for="scale">PNG 图片缩放比例</label>
+        <input type="number" step="0.01" min="0" max="1" name="scale" value="0.3"><br><br>
+
+        <button type="submit">上传</button>
+    </form>
+
+    <h2>-------------------------------------------------------------------------------</h2>
+
+    <h1>比例切分：上传PDF和图片</h1>
+    <form method="post" enctype="multipart/form-data"
+          action="http://localhost:8999/pdfProcess/upload/unequal/scaleStampToPdf">
+        <label for="pdfFile">上传 PDF 文件:</label>
+        <input type="file" name="pdfFile" accept=".pdf"><br><br>
+
+        <label for="imgFile">上传 PNG 图片:</label>
+        <input type="file"  name="imgFile" accept=".png , .jpg"><br><br>
+
+        <label for="scale">PNG 图片缩放比例</label>
+        <input type="number" step="0.01" min="0" max="1" name="scale" value="0.3"><br><br>
+
+        <h5>首页切分比例+尾页切分比例 < 1,不能超过1</h5>
+        <label for="fistScale">首页图片切分比例</label>
+        <input type="number" step="0.01" min="0" max="1"  name="fistScale" value="0.3"><br><br>
+
+        <label for="lastScale">尾页图片切分比例</label>
+        <input type="number" step="0.01" min="0" max="1" name="lastScale" value="0.2"><br><br>
+        <button type="submit">上传</button>
+    </form>
+    <h2>-------------------------------------------------------------------------------</h2>
+</body>
+</html>
